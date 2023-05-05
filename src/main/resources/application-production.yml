@@ -1,0 +1,8 @@
+spring:
+    profiles:
+        active: production
+    datasource:
+        url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+        username: ${PGUSER}
+        password: ${PGPASSWORD}
+        
