@@ -4,19 +4,22 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Image {
-    private String name;
     private String url;
 
+    public Image() {
+    }
+
+    public Image(String url) {
+        this.url = url;
+    }
+
     public String getName() {
-        return name;
+        int index = url.lastIndexOf("/");
+        return url.substring(index);
     }
 
     public String getUrl() {
         return url;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setUrl(String url) {

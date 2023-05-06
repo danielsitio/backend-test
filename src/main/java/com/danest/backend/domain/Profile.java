@@ -1,6 +1,6 @@
 package com.danest.backend.domain;
 
-import com.danest.backend.util.NullOrNotBlank;
+import java.util.Optional;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -23,9 +23,9 @@ public class Profile {
     @NotBlank
     @Column(nullable = false)
     private String description;
+
     @Embedded
-    @AttributeOverride(name = "name", column = @Column(name = "image_name"))
-    @AttributeOverride(name = "url", column = @Column(name = "image_url"))
+    @AttributeOverride(name = "url", column = @Column(name = "image"))
     private Image image;
 
     public String getName() {
@@ -40,8 +40,8 @@ public class Profile {
         return description;
     }
 
-    public Image getPicture() {
-        return image;
+    public Optional<Image> getPicture() {
+        return Optional.ofNullable(image);
     }
 
     public void setName(String name) {

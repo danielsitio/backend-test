@@ -1,7 +1,6 @@
 package com.danest.backend.controller;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.springframework.core.io.PathResource;
@@ -29,9 +28,8 @@ public class ImageController {
     Resource getImageAsResource(@PathVariable String fileName) {
         String fileUrl = this.storageService.getStorageLocation().resolve(fileName).toString();
         File file = new File(fileUrl);
-        if (file != null) {
+        if (file.exists())
             return new PathResource(Paths.get(fileUrl));
-        }
         return null;
     }
 }
