@@ -3,4 +3,11 @@ spring:
         url: jdbc:postgresql://localhost:6000/portfolio
         username: postgres
         password: 1234
-        
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+    servlet:
+        multipart:
+            max-file-size: 10MB
+            max-request-size: 10MB

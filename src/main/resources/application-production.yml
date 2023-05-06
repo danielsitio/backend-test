@@ -3,4 +3,11 @@ spring:
         url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
         username: ${PGUSER}
         password: ${PGPASSWORD}
-        
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: create-drop
+    servlet:
+        multipart:
+            max-file-size: 10MB
+            max-request-size: 10MB
