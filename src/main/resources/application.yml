@@ -7,6 +7,7 @@ spring:
         show-sql: true
         hibernate:
             ddl-auto: update
+
     servlet:
         multipart:
             max-file-size: 10MB

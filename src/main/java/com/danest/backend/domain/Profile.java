@@ -1,5 +1,6 @@
 package com.danest.backend.domain;
 
+import java.util.Map;
 import java.util.Optional;
 
 import jakarta.persistence.AttributeOverride;
@@ -7,26 +8,29 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 @Embeddable
 public class Profile {
-    @NotNull
     @NotBlank
     @Column(nullable = false)
     private String name;
-    @NotNull
     @NotBlank
     @Column(nullable = false)
     private String lastName;
-    @NotNull
     @NotBlank
     @Column(nullable = false)
+    private String title;
+    @NotBlank
+    @Column(nullable = false, length = 1024)
     private String description;
 
     @Embedded
-    @AttributeOverride(name = "url", column = @Column(name = "image"))
+    @AttributeOverride(name = "url", column = @Column(name = "profile_image"))
     private Image image;
+
+    @Embedded
+    @AttributeOverride(name = "url", column = @Column(name = "banner_image"))
+    private Image bannerImage;
 
     public String getName() {
         return name;
@@ -34,6 +38,10 @@ public class Profile {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public String getDescription() {
@@ -44,6 +52,14 @@ public class Profile {
         return Optional.ofNullable(image);
     }
 
+    public Optional<Image> getBannerImage() {
+        return Optional.ofNullable(bannerImage);
+    }
+
+    public String getFullName() {
+        return name + " " + lastName;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -52,11 +68,40 @@ public class Profile {
         this.lastName = lastName;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
     public void setPicture(Image image) {
         this.image = image;
+    }
+
+    public void setBannerImage(Image bannerImage) {
+        this.bannerImage = bannerImage;
+    }
+
+    public void updateFromMap(Map<String, String> partialProfile) {
+        partialProfile.keySet()
+                .stream()
+                .forEach(fieldToChange -> {
+                    switch (fieldToChange) {
+                        case "name":
+                            setName(partialProfile.get(fieldToChange));
+                            break;
+                        case "lastName":
+                            setLastName(partialProfile.get(fieldToChange));
+                            break;
+                        case "title":
+                            setTitle(partialProfile.get(fieldToChange));
+                            break;
+                        case "description":
+                            setDescription(partialProfile.get(fieldToChange));
+                            break;
+                    }
+                });
     }
 }

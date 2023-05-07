@@ -1,24 +1,42 @@
 package com.danest.backend.service;
 
+import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.danest.backend.domain.Image;
+import com.danest.backend.domain.Profile;
+import com.danest.backend.domain.User;
 import com.danest.backend.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
 public class ProfileService {
+
+    Logger logger = LoggerFactory.getLogger(ProfileService.class);
+
     private final StorageService storageService;
+
     private final UserRepository userRepository;
 
     ProfileService(StorageService storageService, UserRepository userRepository) {
         this.storageService = storageService;
         this.userRepository = userRepository;
+    }
+
+    public Profile getProfile() {
+        return onlyUser().getProfile();
+    }
+
+    @Transactional
+    public void patchProfile(Map<String, String> partialProfile) {
+        onlyUser().getProfile().updateFromMap(partialProfile);
     }
 
     @Transactional
@@ -27,29 +45,48 @@ public class ProfileService {
             deleteCurrentProfilePicture();
         storageService.store(newProfilePicture);
         Image picture = new Image(localUrl() + "/images/" + newProfilePicture.getOriginalFilename());
-        userRepository.findOnlyUser().getProfile().setPicture(picture);
+        onlyUser().getProfile().setPicture(picture);
     }
 
-    public String getProfilePictureUrl() {
-        if (thereIsAlreadyAProfilePicture())
-            return currentProfilePicture().get().getUrl();
-        return null;
+    @Transactional
+    public void changeBannerImage(MultipartFile newBannerImage) throws Exception {
+        if (thereIsAlreadyABannerImage())
+            deleteCurrentBannerImage();
+        storageService.store(newBannerImage);
+        Image bannerImage = new Image(localUrl() + "/images/" + newBannerImage.getOriginalFilename());
+        onlyUser().getProfile().setBannerImage(bannerImage);
     }
 
     private void deleteCurrentProfilePicture() {
         this.storageService.delete(currentProfilePicture().get().getName());
     }
 
+    private void deleteCurrentBannerImage() {
+        this.storageService.delete(currentBannerImage().get().getName());
+    }
+
     private boolean thereIsAlreadyAProfilePicture() {
         return this.currentProfilePicture().isPresent();
     }
 
+    private boolean thereIsAlreadyABannerImage() {
+        return this.currentProfilePicture().isPresent();
+    }
+
     private Optional<Image> currentProfilePicture() {
-        return this.userRepository.findOnlyUserProfile().getPicture();
+        return this.onlyUser().getProfile().getPicture();
+    }
+
+    private Optional<Image> currentBannerImage() {
+        return this.onlyUser().getProfile().getBannerImage();
     }
 
     private String localUrl() {
         return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    }
+
+    private User onlyUser() {
+        return this.userRepository.findOnlyUser();
     }
 
 }

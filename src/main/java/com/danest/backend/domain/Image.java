@@ -15,7 +15,7 @@ public class Image {
 
     public String getName() {
         int index = url.lastIndexOf("/");
-        return url.substring(index);
+        return url.substring(index + 1);
     }
 
     public String getUrl() {
