@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.danest.backend.domain.Profile;
+import com.danest.backend.dto.ProjectDto;
 import com.danest.backend.service.ProfileService;
 
 @RestController
@@ -51,4 +52,8 @@ public class ProfileController {
         profileService.changeBannerImage(bannerImage);
     }
 
+    @PostMapping("/test")
+    void test(@RequestBody ProjectDto something) {
+        logger.info("se recibio correctamente " + something.getImage().getOriginalFilename());
+    }
 }
