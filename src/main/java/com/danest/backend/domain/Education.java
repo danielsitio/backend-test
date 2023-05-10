@@ -1,6 +1,7 @@
 package com.danest.backend.domain;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 import com.danest.backend.util.NullOrNotBlank;
 
@@ -65,5 +66,26 @@ public class Education {
 
     public void setFinishDate(LocalDate finishDate) {
         this.finishDate = finishDate;
+    }
+
+    public void updateFromMap(Map<String, String> partialEducation) {
+        partialEducation.keySet()
+                .stream()
+                .forEach(fieldToChange -> {
+                    switch (fieldToChange) {
+                        case "title":
+                            setTitle(partialEducation.get(fieldToChange));
+                            break;
+                        case "institute":
+                            setInstitute(partialEducation.get(fieldToChange));
+                            break;
+                        case "startDate":
+                            setStartDate(LocalDate.parse(partialEducation.get(fieldToChange)));
+                            break;
+                        case "finishDate":
+                            setFinishDate(LocalDate.parse(partialEducation.get(fieldToChange)));
+                            break;
+                    }
+                });
     }
 }
