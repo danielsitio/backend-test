@@ -34,6 +34,9 @@ public class EducationController {
 
     @PostMapping
     Education saveEducation(@RequestPart(required = false) MultipartFile logo, @RequestPart Education education) {
+        if (logo != null) {
+            System.out.println(logo.getOriginalFilename());
+        }
         this.educationService.saveEducation(education);
         return this.educationService.getEducation(education.getId());
     }

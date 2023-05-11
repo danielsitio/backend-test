@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,6 +19,9 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class ProfileService {
+
+    @Value("${custom.image-directory}")
+    private String imageDirectory;
 
     Logger logger = LoggerFactory.getLogger(ProfileService.class);
 
@@ -53,7 +57,7 @@ public class ProfileService {
         if (thereIsAlreadyABannerImage())
             deleteCurrentBannerImage();
         storageService.store(newBannerImage);
-        Image bannerImage = new Image(localUrl() + "/images/" + newBannerImage.getOriginalFilename());
+        Image bannerImage = new Image(imageDirectory + newBannerImage.getOriginalFilename());
         onlyUser().getProfile().setBannerImage(bannerImage);
     }
 

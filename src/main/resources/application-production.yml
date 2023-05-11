@@ -11,3 +11,5 @@ spring:
         multipart:
             max-file-size: 10MB
             max-request-size: 10MB
+custom:
+    image-directory: ${IMAGE_DIRECTORY}

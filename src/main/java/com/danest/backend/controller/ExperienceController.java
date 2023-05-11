@@ -34,8 +34,9 @@ public class ExperienceController {
     }
 
     @PostMapping
-    Experience add(@RequestPart(required = false) MultipartFile logo, @RequestPart Experience experience) {
-        this.experienceService.saveExperience(experience);
+    Experience add(@RequestPart Experience experience, @RequestPart(required = false) MultipartFile workplaceLogo)
+            throws Exception {
+        this.experienceService.saveExperience(experience, workplaceLogo);
         return this.experienceService.getExperience(experience.getId());
     }
 

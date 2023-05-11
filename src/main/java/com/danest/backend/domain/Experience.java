@@ -3,9 +3,9 @@ package com.danest.backend.domain;
 import java.time.LocalDate;
 import java.util.Map;
 
-import com.danest.backend.util.NullOrNotBlank;
-
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -20,8 +20,10 @@ public class Experience {
     @GeneratedValue
     private Long id;
     @NotBlank
+    @Column(nullable = false)
     private String position;
     @NotBlank
+    @Column(nullable = false)
     private String description;
     @NotNull
     @Column(nullable = false)
@@ -29,8 +31,10 @@ public class Experience {
     @NotNull
     @Column(nullable = false)
     private LocalDate finishDate;
-    @NullOrNotBlank
-    private String logo;
+    @Embedded
+    @AttributeOverride(name = "name", column = @Column(name = "workplace_name", nullable = false))
+    @AttributeOverride(name = "logo.url", column = @Column(name = "workplace_logo"))
+    private Institute workplace;
 
     public Long getId() {
         return id;
@@ -68,12 +72,12 @@ public class Experience {
         this.finishDate = finishDate;
     }
 
-    public String getLogo() {
-        return logo;
+    public Institute getWorkplace() {
+        return workplace;
     }
 
-    public void setLogo(String logo) {
-        this.logo = logo;
+    public void setWorkplace(Institute workplace) {
+        this.workplace = workplace;
     }
 
     public void updateFromMap(Map<String, String> partialExperience) {
