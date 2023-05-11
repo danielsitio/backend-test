@@ -1,14 +1,11 @@
 package com.danest.backend.controller;
 
-import java.util.Map;
-
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +31,9 @@ public class ProjectController {
     }
 
     @PostMapping
-    Project post(@RequestPart(required = false) MultipartFile image, @RequestPart Project project) {
-        this.projectService.saveProject(project);
+    Project post(@RequestPart(required = false) MultipartFile projectPortrait, @RequestPart Project project)
+            throws Exception {
+        this.projectService.saveProject(project, projectPortrait);
         return this.projectService.getProject(project.getId());
     }
 
@@ -45,8 +43,9 @@ public class ProjectController {
     }
 
     @PatchMapping("/{id}")
-    Project patch(@PathVariable Long id, @RequestBody Map<String, String> partialProject) {
-        this.projectService.updateProject(id, partialProject);
+    Project patch(@PathVariable Long id, @RequestPart Project updatedProject,
+            @RequestPart(required = false) MultipartFile updatedProjectPortrait) throws Exception {
+        this.projectService.updateProject(id, updatedProject, updatedProjectPortrait);
         return this.projectService.getProject(id);
     }
 

@@ -2,10 +2,13 @@ package com.danest.backend.domain;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Optional;
 
 import com.danest.backend.util.NullOrNotBlank;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -28,8 +31,9 @@ public class Project {
     private LocalDate realizationDate;
     @NullOrNotBlank
     private String link;
-    @NullOrNotBlank
-    private String image;
+    @Embedded
+    @AttributeOverride(name = "url", column = @Column(name = "portrait_url"))
+    private Image portrait;
 
     public Long getId() {
         return id;
@@ -67,12 +71,20 @@ public class Project {
         this.link = link;
     }
 
-    public String getImage() {
-        return image;
+    public Optional<Image> getPortrait() {
+        return Optional.ofNullable(portrait);
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setPortrait(Image portrait) {
+        this.portrait = portrait;
+    }
+
+    public void copyProject(Project project) {
+        setName(project.name);
+        setDescription(project.description);
+        setLink(project.link);
+        setRealizationDate(project.realizationDate);
+        setPortrait(project.portrait);
     }
 
     public void updateFromMap(Map<String, String> partialProject) {

@@ -1,7 +1,5 @@
 package com.danest.backend.controller;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,11 +30,9 @@ public class EducationController {
     }
 
     @PostMapping
-    Education saveEducation(@RequestPart(required = false) MultipartFile logo, @RequestPart Education education) {
-        if (logo != null) {
-            System.out.println(logo.getOriginalFilename());
-        }
-        this.educationService.saveEducation(education);
+    Education saveEducation(@RequestPart(required = false) MultipartFile schoolLogo, @RequestPart Education education)
+            throws Exception {
+        this.educationService.saveEducation(education, schoolLogo);
         return this.educationService.getEducation(education.getId());
     }
 
@@ -52,8 +47,9 @@ public class EducationController {
     }
 
     @PatchMapping("/{id}")
-    Education patchEducation(@PathVariable Long id, @RequestBody Map<String, String> partialEducation) {
-        this.educationService.modifyEducation(id, partialEducation);
+    Education patchEducation(@PathVariable Long id, @RequestPart Education updatedEducation,
+            @RequestPart(required = false) MultipartFile updatedSchoolLogo) throws Exception {
+        this.educationService.modifyEducation(id, updatedEducation, updatedSchoolLogo);
         return this.educationService.getEducation(id);
     }
 

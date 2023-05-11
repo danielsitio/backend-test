@@ -3,9 +3,9 @@ package com.danest.backend.domain;
 import java.time.LocalDate;
 import java.util.Map;
 
-import com.danest.backend.util.NullOrNotBlank;
-
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -20,8 +20,7 @@ public class Education {
     @GeneratedValue
     private Long id;
     @NotBlank
-    private String institute;
-    @NotBlank
+    @Column(nullable = false)
     private String title;
     @NotNull
     @Column(nullable = false)
@@ -29,15 +28,13 @@ public class Education {
     @NotNull
     @Column(nullable = false)
     private LocalDate finishDate;
-    @NullOrNotBlank
-    private String logo;
+    @Embedded
+    @AttributeOverride(name = "name", column = @Column(name = "school_name", nullable = false))
+    @AttributeOverride(name = "logo.url", column = @Column(name = "school_logo"))
+    private Institute school;
 
     public Long getId() {
         return id;
-    }
-
-    public String getInstitute() {
-        return institute;
     }
 
     public String getTitle() {
@@ -52,10 +49,6 @@ public class Education {
         return finishDate;
     }
 
-    public void setInstitute(String institute) {
-        this.institute = institute;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -68,6 +61,21 @@ public class Education {
         this.finishDate = finishDate;
     }
 
+    public Institute getSchool() {
+        return school;
+    }
+
+    public void setSchool(Institute school) {
+        this.school = school;
+    }
+
+    public void copyEducation(Education education) {
+        this.school = education.school;
+        this.title = education.title;
+        this.startDate = education.startDate;
+        this.finishDate = education.finishDate;
+    }
+
     public void updateFromMap(Map<String, String> partialEducation) {
         partialEducation.keySet()
                 .stream()
@@ -75,9 +83,6 @@ public class Education {
                     switch (fieldToChange) {
                         case "title":
                             setTitle(partialEducation.get(fieldToChange));
-                            break;
-                        case "institute":
-                            setInstitute(partialEducation.get(fieldToChange));
                             break;
                         case "startDate":
                             setStartDate(LocalDate.parse(partialEducation.get(fieldToChange)));

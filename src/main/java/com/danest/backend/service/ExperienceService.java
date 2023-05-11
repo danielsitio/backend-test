@@ -60,9 +60,9 @@ public class ExperienceService {
             Image image = new Image(imageDirectory + experienceToUpdate.getWorkplaceIdentifier()
                     + storageService.getExtension(updatedWorkplaceLogo));
             updatedExperience.getWorkplace().setLogo(image);
-        } else {
+        } else if (experienceToUpdate.getWorkplace().getLogo().isPresent()) {
             updatedExperience.getWorkplace().setLogo(experienceToUpdate.getWorkplace().getLogo().get());
         }
-        this.experienceRepository.findById(id).get().copyExperience(updatedExperience);
+        experienceToUpdate.copyExperience(updatedExperience);
     }
 }
