@@ -38,22 +38,26 @@ public class ProfileController {
     }
 
     @PatchMapping
-    void patchProfile(@RequestBody Map<String, String> partialProfile) {
+    Profile patchProfile(@RequestBody Map<String, String> partialProfile) {
         profileService.patchProfile(partialProfile);
+        return profileService.getProfile();
     }
 
     @PostMapping("/picture")
-    void saveProfilePicture(@RequestParam MultipartFile profilePicture) throws Exception {
+    String saveProfilePicture(@RequestParam MultipartFile profilePicture) throws Exception {
         profileService.changeProfilePicture(profilePicture);
+        return profileService.getProfile().getPicture().get().getUrl();
     }
 
     @PostMapping("/banner")
-    void saveBannerImage(@RequestParam MultipartFile bannerImage) throws Exception {
-        profileService.changeBannerImage(bannerImage);
+    String saveBannerImage(@RequestParam MultipartFile banner) throws Exception {
+        profileService.changeBannerImage(banner);
+        return profileService.getProfile().getBanner().get().getUrl();
     }
 
     @PostMapping("/test")
     void test(@RequestBody ProjectDto something) {
         logger.info("se recibio correctamente " + something.getImage().getOriginalFilename());
     }
+
 }

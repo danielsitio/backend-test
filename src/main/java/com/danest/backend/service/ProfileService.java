@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.danest.backend.domain.Image;
 import com.danest.backend.domain.Profile;
@@ -47,8 +46,8 @@ public class ProfileService {
     public void changeProfilePicture(MultipartFile newProfilePicture) throws Exception {
         if (thereIsAlreadyAProfilePicture())
             deleteCurrentProfilePicture();
-        storageService.store(newProfilePicture, newProfilePicture.getName());
-        Image picture = new Image(localUrl() + "/images/" + newProfilePicture.getOriginalFilename());
+        storageService.store(newProfilePicture, "profile");
+        Image picture = new Image(imageDirectory + "profile" + storageService.getExtension(newProfilePicture));
         onlyUser().getProfile().setPicture(picture);
     }
 
@@ -56,9 +55,9 @@ public class ProfileService {
     public void changeBannerImage(MultipartFile newBannerImage) throws Exception {
         if (thereIsAlreadyABannerImage())
             deleteCurrentBannerImage();
-        storageService.store(newBannerImage, newBannerImage.getName());
-        Image bannerImage = new Image(imageDirectory + newBannerImage.getOriginalFilename());
-        onlyUser().getProfile().setBannerImage(bannerImage);
+        storageService.store(newBannerImage, "banner");
+        Image bannerImage = new Image(imageDirectory + "banner" + storageService.getExtension(newBannerImage));
+        onlyUser().getProfile().setBanner(bannerImage);
     }
 
     private void deleteCurrentProfilePicture() {
@@ -82,11 +81,7 @@ public class ProfileService {
     }
 
     private Optional<Image> currentBannerImage() {
-        return this.onlyUser().getProfile().getBannerImage();
-    }
-
-    private String localUrl() {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        return this.onlyUser().getProfile().getBanner();
     }
 
     private User onlyUser() {

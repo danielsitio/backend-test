@@ -30,7 +30,7 @@ public class Profile {
 
     @Embedded
     @AttributeOverride(name = "url", column = @Column(name = "banner_image"))
-    private Image bannerImage;
+    private Image banner;
 
     public String getName() {
         return name;
@@ -52,8 +52,8 @@ public class Profile {
         return Optional.ofNullable(image);
     }
 
-    public Optional<Image> getBannerImage() {
-        return Optional.ofNullable(bannerImage);
+    public Optional<Image> getBanner() {
+        return Optional.ofNullable(banner);
     }
 
     public String getFullName() {
@@ -80,8 +80,8 @@ public class Profile {
         this.image = image;
     }
 
-    public void setBannerImage(Image bannerImage) {
-        this.bannerImage = bannerImage;
+    public void setBanner(Image bannerImage) {
+        this.banner = bannerImage;
     }
 
     public void updateFromMap(Map<String, String> partialProfile) {
