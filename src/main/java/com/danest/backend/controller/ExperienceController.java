@@ -46,8 +46,9 @@ public class ExperienceController {
     }
 
     @PatchMapping("/{id}")
-    Experience patch(@PathVariable Long id, @RequestBody Map<String, String> partialExperience) {
-        this.experienceService.updateExperience(id, partialExperience);
+    Experience patch(@PathVariable Long id, @RequestPart Experience updatedExperience,
+            @RequestPart(required = false) MultipartFile updatedWorkplaceLogo) throws Exception {
+        this.experienceService.updateExperience(id, updatedExperience, updatedWorkplaceLogo);
         return this.experienceService.getExperience(id);
     }
 }

@@ -80,6 +80,18 @@ public class Experience {
         this.workplace = workplace;
     }
 
+    public String getWorkplaceIdentifier() {
+        return "workplace" + id;
+    }
+
+    public void copyExperience(Experience experience) {
+        this.workplace = experience.workplace;
+        this.position = experience.description;
+        this.description = experience.description;
+        this.startDate = experience.startDate;
+        this.finishDate = experience.finishDate;
+    }
+
     public void updateFromMap(Map<String, String> partialExperience) {
         partialExperience.keySet()
                 .stream()

@@ -20,7 +20,7 @@ import jakarta.transaction.Transactional;
 @Service
 public class ProfileService {
 
-    @Value("${custom.image-directory}")
+    @Value("${custom.image-directory-url}")
     private String imageDirectory;
 
     Logger logger = LoggerFactory.getLogger(ProfileService.class);
@@ -47,7 +47,7 @@ public class ProfileService {
     public void changeProfilePicture(MultipartFile newProfilePicture) throws Exception {
         if (thereIsAlreadyAProfilePicture())
             deleteCurrentProfilePicture();
-        storageService.store(newProfilePicture);
+        storageService.store(newProfilePicture, newProfilePicture.getName());
         Image picture = new Image(localUrl() + "/images/" + newProfilePicture.getOriginalFilename());
         onlyUser().getProfile().setPicture(picture);
     }
@@ -56,7 +56,7 @@ public class ProfileService {
     public void changeBannerImage(MultipartFile newBannerImage) throws Exception {
         if (thereIsAlreadyABannerImage())
             deleteCurrentBannerImage();
-        storageService.store(newBannerImage);
+        storageService.store(newBannerImage, newBannerImage.getName());
         Image bannerImage = new Image(imageDirectory + newBannerImage.getOriginalFilename());
         onlyUser().getProfile().setBannerImage(bannerImage);
     }

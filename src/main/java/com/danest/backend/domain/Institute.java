@@ -1,5 +1,7 @@
 package com.danest.backend.domain;
 
+import java.util.Optional;
+
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 
@@ -17,8 +19,8 @@ public class Institute {
         this.name = name;
     }
 
-    public Image getLogo() {
-        return logo;
+    public Optional<Image> getLogo() {
+        return Optional.ofNullable(logo);
     }
 
     public void setLogo(Image logo) {

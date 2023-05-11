@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,9 +26,9 @@ public class StorageService {
         fileToDelete.delete();
     }
 
-    public void store(MultipartFile file) throws Exception {
+    public void store(MultipartFile file, String name) throws Exception {
         InputStream inputStream = file.getInputStream();
-        Path filePath = this.storageLocation.resolve(file.getOriginalFilename());
+        Path filePath = this.storageLocation.resolve(name + getExtension(file));
         Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -37,5 +38,9 @@ public class StorageService {
 
     public Path getStorageLocation() {
         return storageLocation;
+    }
+
+    public String getExtension(MultipartFile file) {
+        return "." + FilenameUtils.getExtension(file.getOriginalFilename());
     }
 }
