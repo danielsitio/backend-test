@@ -14,4 +14,7 @@ spring:
             max-request-size: 10MB
 custom:
     image-directory-url: http://localhost:8080/images/
+jwt:
+    token:
+        secret: 1212312212d12dd21d211d21d22d1e21d12dd21d212d12d12d1d212d112d2d12d1dw1d1d21d2d122d112d1d12e12e2d131f1f1ff33f131rf1r1r3
     

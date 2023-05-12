@@ -5,6 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.danest.backend.domain.Profile;
 import com.danest.backend.domain.User;
+import java.util.Optional;
 
 public interface UserRepository extends CrudRepository<User, Long> {
 
@@ -13,4 +14,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.id=1")
     User findOnlyUser();
+
+    Optional<User> findByUsername(String username);
 }

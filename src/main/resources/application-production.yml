@@ -13,3 +13,6 @@ spring:
             max-request-size: 10MB
 custom:
     image-directory-url: ${IMAGE_DIRECTORY}
+jwt:
+    token:
+        secret: ${JWT_SECRET}

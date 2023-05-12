@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +14,6 @@ import com.danest.backend.service.StorageService;
 
 @RestController
 @RequestMapping("/images")
-@CrossOrigin
 public class ImageController {
 
     private final StorageService storageService;
