@@ -24,10 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<User> userFound = userRepository.findByUsername(username);
 
         if (userFound.isPresent()) {
-
             User user = userFound.get();
-            System.out.print("el usuario encontrado es " + user.getUsername());
-            System.out.println("con contraseña " + user.getPassword());
             return org.springframework.security.core.userdetails.User
                     .withUsername(user.getUsername())
                     .password(user.getPassword())

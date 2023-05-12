@@ -28,10 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         Cookie authorizationCookie = WebUtils.getCookie(request, "Authorization");
-        System.out.println("llego un requeste hacia " + request.getServletPath());
         if (authorizationCookie != null) {
             String jwt = authorizationCookie.getValue();
-            System.out.println("se esta intentando authorizar request qe va a " + request.getServletPath());
             String username = jwtTokenUtil.getUsernameFromToken(jwt);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null,
                     List.of());
@@ -42,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().equals("/login") | request.getServletPath().equals("/images/**");
+        return request.getServletPath().equals("/login") || request.getServletPath().equals("/logout")
+                || request.getServletPath().equals("/images/**");
     }
 }
