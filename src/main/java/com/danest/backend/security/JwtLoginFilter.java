@@ -45,6 +45,7 @@ public class JwtLoginFilter extends OncePerRequestFilter {
         Cookie authorizationCookie = new Cookie("Authorization", jwt);
         authorizationCookie.setHttpOnly(true);
         authorizationCookie.setSecure(true);
+        authorizationCookie.setAttribute("SameSite", "None");
         response.addCookie(authorizationCookie);
     }
 
