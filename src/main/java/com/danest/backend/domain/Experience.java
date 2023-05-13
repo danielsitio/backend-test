@@ -86,7 +86,7 @@ public class Experience {
 
     public void copyExperience(Experience experience) {
         this.workplace = experience.workplace;
-        this.position = experience.description;
+        this.position = experience.position;
         this.description = experience.description;
         this.startDate = experience.startDate;
         this.finishDate = experience.finishDate;
