@@ -4,74 +4,71 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.danest.backend.security.JwtAuthenticationFilter;
+import com.danest.backend.security.JwtAuthorizationFilter;
 import com.danest.backend.security.JwtLoginFilter;
-import com.danest.backend.security.JwtLogoutFilter;
+import com.danest.backend.security.JwtTokenUtil;
 
 @Configuration
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final JwtLoginFilter jwtLoginFilter;
-    private final JwtLogoutFilter jwtLogoutFilter;
+        private final AuthenticationManager authenticationManager;
+        private final JwtTokenUtil jwtTokenUtil;
 
-    SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, JwtLoginFilter jwtLoginFilter,
-            JwtLogoutFilter jwtLogoutFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.jwtLoginFilter = jwtLoginFilter;
-        this.jwtLogoutFilter = jwtLogoutFilter;
-    }
+        SecurityConfig(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
+                this.authenticationManager = authenticationManager;
+                this.jwtTokenUtil = jwtTokenUtil;
+        }
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        @Bean
+        SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf
-                .disable());
-        http.cors(cors -> cors
-                .configurationSource(corsConfigurationSource()));
+                http
+                                .formLogin(formlogin -> formlogin
+                                                .disable())
+                                .csrf(csrf -> csrf
+                                                .disable())
 
-        http.addFilterAt(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                .cors(cors -> cors
+                                                .configurationSource(corsConfigurationSource()))
 
-        http.logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
-                .deleteCookies("Authorization"));
-        http.sessionManagement(sessionManagement -> sessionManagement
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                                .addFilterAt(new JwtLoginFilter(authenticationManager, jwtTokenUtil),
+                                                UsernamePasswordAuthenticationFilter.class)
 
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST).authenticated()
-                .requestMatchers(HttpMethod.DELETE).authenticated()
-                .requestMatchers(HttpMethod.PATCH).authenticated()
-                .anyRequest().permitAll());
+                                .addFilterAt(new JwtAuthorizationFilter(jwtTokenUtil),
+                                                UsernamePasswordAuthenticationFilter.class)
 
-        return http.build();
-    }
+                                .sessionManagement(sessionManagement -> sessionManagement
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOriginPattern("*");
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
-        corsConfiguration.setExposedHeaders(Arrays.asList("*"));
-        corsConfiguration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
-    }
+                                .logout(logout -> logout
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(
+                                                                HttpStatus.OK))
+                                                .deleteCookies("Authorization"));
+                return http.build();
+        }
+
+        CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration corsConfiguration = new CorsConfiguration();
+                corsConfiguration.addAllowedOriginPattern("*");
+                corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+                corsConfiguration.setExposedHeaders(Arrays.asList("*"));
+                corsConfiguration.setAllowCredentials(true);
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", corsConfiguration);
+                return source;
+        }
 
 }

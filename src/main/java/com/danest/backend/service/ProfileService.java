@@ -1,7 +1,6 @@
 package com.danest.backend.service;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +43,6 @@ public class ProfileService {
 
     @Transactional
     public void changeProfilePicture(MultipartFile newProfilePicture) throws Exception {
-        if (thereIsAlreadyAProfilePicture())
-            deleteCurrentProfilePicture();
         storageService.store(newProfilePicture, "profile");
         Image picture = new Image(imageDirectory + "profile" + storageService.getExtension(newProfilePicture));
         onlyUser().getProfile().setPicture(picture);
@@ -53,35 +50,9 @@ public class ProfileService {
 
     @Transactional
     public void changeBannerImage(MultipartFile newBannerImage) throws Exception {
-        if (thereIsAlreadyABannerImage())
-            deleteCurrentBannerImage();
         storageService.store(newBannerImage, "banner");
         Image bannerImage = new Image(imageDirectory + "banner" + storageService.getExtension(newBannerImage));
         onlyUser().getProfile().setBanner(bannerImage);
-    }
-
-    private void deleteCurrentProfilePicture() {
-        this.storageService.delete(currentProfilePicture().get().getName());
-    }
-
-    private void deleteCurrentBannerImage() {
-        this.storageService.delete(currentBannerImage().get().getName());
-    }
-
-    private boolean thereIsAlreadyAProfilePicture() {
-        return this.currentProfilePicture().isPresent();
-    }
-
-    private boolean thereIsAlreadyABannerImage() {
-        return this.currentProfilePicture().isPresent();
-    }
-
-    private Optional<Image> currentProfilePicture() {
-        return this.onlyUser().getProfile().getPicture();
-    }
-
-    private Optional<Image> currentBannerImage() {
-        return this.onlyUser().getProfile().getBanner();
     }
 
     private User onlyUser() {

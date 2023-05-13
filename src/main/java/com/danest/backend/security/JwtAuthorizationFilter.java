@@ -3,9 +3,9 @@ package com.danest.backend.security;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -15,12 +15,11 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    JwtAuthenticationFilter(JwtTokenUtil jwtTokenUtil) {
+    public JwtAuthorizationFilter(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
@@ -34,13 +33,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null,
                     List.of());
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request, response);
+        } else {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
-        doFilter(request, response, filterChain);
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().equals("/login") || request.getServletPath().equals("/logout")
-                || request.getServletPath().equals("/images/**");
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return request.getMethod().equals(HttpMethod.GET.toString());
     }
+
 }
